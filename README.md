@@ -2,18 +2,22 @@
 
 English | [简体中文](README.zh-CN.md)
 
+> **Device testing update:** One A8 user reported that the built-in controller disappeared after installing beta.1 and returning to Gaming Mode, then recovered after a normal reboot without uninstalling. Rumble adjustment was subsequently confirmed working. The initial disconnection cause remains unresolved. Beta.2 changes the mode-selection UI, not the controller driver or installation restart behavior. Save work and plan a normal reboot after installation; do not treat this as a verified disconnection fix.
+
+Beta.2 replaces the modal dropdown with three inline selection buttons. **Current hardware mode** and **pending mode** are shown separately. Selecting a mode does not write hardware; Apply opens a confirmation, and confirmed changes are read back. Applying rumble no longer discards a pending mode selection. Mode switching on physical hardware remains unverified.
+
 A Decky Loader plugin for **MSI Claw A8 (AMD Ryzen Z2 Extreme, BZ2EM)**: switch the shared M1/M2 back-button mode and adjust left/right rumble strength independently.
 
 Z2E abbreviates Z2 Extreme. MSI identifies the device as [Claw A8 BZ2EM](https://www.msi.com/Handheld/Claw-A8-BZ2EMX/Specification). Compatibility with other Claw models, including the Claw 8 AI+ family, is not established. This is a community project, not an official MSI product.
 
-**Experimental v0.2.0-beta.1 — not yet tested on physical hardware.** The existing release appears in Decky as **Claw Controls**; its installation identity is retained for compatibility.
+**Experimental v0.2.0-beta.2 — not yet tested on physical hardware.** The existing release appears in Decky as **Claw Controls**; its installation identity is retained for compatibility.
 
 ## Install on SteamOS
 
 Install Decky Loader first. Open **Konsole** in Desktop Mode and run as your normal desktop user:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash
 ```
 
 Requires Python 3, curl, sudo and systemd. Enter your sudo password if prompted. The default Decky location is `~/homebrew`. For a custom location, replace the final `bash` with `bash -s -- install --decky-home /absolute/homebrew`. Starting as root would incorrectly default to `/root/homebrew`.
@@ -30,9 +34,9 @@ If the plugin cannot open, use Konsole:
 
 ```sh
 # Reinstall this beta version
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- reinstall
 # Uninstall
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- uninstall
 # Offline uninstall of an existing installation
 python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
 ```

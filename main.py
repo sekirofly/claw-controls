@@ -70,7 +70,7 @@ def _error(exc):
 
 class Plugin:
     async def _main(self):
-        log.info("Claw Controls 0.2.0-beta.1 loaded. euid=%s", os.geteuid())
+        log.info("Claw Controls 0.2.0-beta.2 loaded. euid=%s", os.geteuid())
 
     async def maintenance(self, action: str):
         """Run outside the Decky service so uninstall/reinstall can stop Decky safely."""
