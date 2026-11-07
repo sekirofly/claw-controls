@@ -14,7 +14,7 @@ import urllib.request
 import zipfile
 
 VERSION = "0.2.0-beta.1"
-REPO = "https://github.com/sekirofly/msi-claw-a8-z2e-decky"
+REPO = "https://github.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky"
 NAME = "Claw Controls"
 FOLDER = "ClawControls"
 SERVICE = "plugin_loader.service"

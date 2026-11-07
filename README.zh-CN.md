@@ -9,7 +9,7 @@ MSI Claw A8 controller settings for Decky Loader. **Experimental 0.2.0-beta.1; n
 先安装 Decky Loader，在桌面模式打开 **Konsole**，粘贴：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash
 ```
 
 需要 `python3`、`curl`、`sudo` 和 systemd。终端可能要求 sudo 密码。默认 Decky 路径为当前用户的 `~/homebrew`；非标准位置使用 `bash -s -- install --decky-home /absolute/homebrew`。不要以 root 身份直接启动默认命令，否则默认主目录是 `/root`。
@@ -24,9 +24,9 @@ curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.
 
 ```sh
 # 干净重装同一测试版本
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- reinstall
 # 干净卸载
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- uninstall
 ```
 
 安装后也可离线卸载：

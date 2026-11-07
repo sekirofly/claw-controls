@@ -13,7 +13,7 @@ Z2E abbreviates Z2 Extreme. MSI identifies the device as [Claw A8 BZ2EM](https:/
 Install Decky Loader first. Open **Konsole** in Desktop Mode and run as your normal desktop user:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash
 ```
 
 Requires Python 3, curl, sudo and systemd. Enter your sudo password if prompted. The default Decky location is `~/homebrew`. For a custom location, replace the final `bash` with `bash -s -- install --decky-home /absolute/homebrew`. Starting as root would incorrectly default to `/root/homebrew`.
@@ -30,9 +30,9 @@ If the plugin cannot open, use Konsole:
 
 ```sh
 # Reinstall this beta version
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- reinstall
 # Uninstall
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-decky/v0.2.0-beta.1/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.1/install.sh | bash -s -- uninstall
 # Offline uninstall of an existing installation
 python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
 ```
