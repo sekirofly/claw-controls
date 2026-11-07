@@ -1,4 +1,4 @@
-# MSI Claw A8 Z2E — Back Buttons & Rumble
+# MSI Claw A8 Z2E Controller
 
 English | [简体中文](README.zh-CN.md)
 
@@ -10,14 +10,22 @@ A Decky Loader plugin for **MSI Claw A8 (AMD Ryzen Z2 Extreme, BZ2EM)**: switch 
 
 Z2E abbreviates Z2 Extreme. MSI identifies the device as [Claw A8 BZ2EM](https://www.msi.com/Handheld/Claw-A8-BZ2EMX/Specification). Compatibility with other Claw models, including the Claw 8 AI+ family, is not established. This is a community project, not an official MSI product.
 
-**Experimental v0.2.0-beta.2 — not yet tested on physical hardware.** The existing release appears in Decky as **Claw Controls**; its installation identity is retained for compatibility.
+**Experimental v0.2.0-beta.3 — this release has not been tested on physical hardware.** Display name, plugin identity, package and installation directory now use MSI Claw A8 Z2E Controller. There is no automatic migration from Claw Controls.
+
+**Existing users must uninstall the old plugin first:**
+
+```sh
+python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
+```
+
+Then run the new installer below. The new installer refuses installation while the old plugin directory remains; it will not silently install a second copy. Uninstallation does not reset hardware settings.
 
 ## Install on SteamOS
 
 Install Decky Loader first. Open **Konsole** in Desktop Mode and run as your normal desktop user:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash
 ```
 
 Requires Python 3, curl, sudo and systemd. Enter your sudo password if prompted. The default Decky location is `~/homebrew`. For a custom location, replace the final `bash` with `bash -s -- install --decky-home /absolute/homebrew`. Starting as root would incorrectly default to `/root/homebrew`.
@@ -26,7 +34,7 @@ The installer downloads a version-pinned release, verifies its SHA-256 checksum 
 
 ## Clean uninstall and reinstall
 
-The plugin provides **clean uninstall** and **clean reinstall of the current version** buttons, each with confirmation. Maintenance briefly restarts Decky, temporarily interrupting other plugins. A failed download leaves the installed version untouched. Installation failure triggers a rollback attempt; failed recovery preserves `.claw-controls-backup-*` directories.
+The plugin provides **clean uninstall** and **clean reinstall of the current version** buttons, each with confirmation. Maintenance briefly restarts Decky, temporarily interrupting other plugins. A failed download leaves the installed version untouched. Installation failure triggers a rollback attempt; failed recovery preserves `.msi-claw-a8-z2e-controller-backup-*` directories.
 
 “Scheduled” means the maintenance task was accepted, not that it succeeded. Check the plugin after restart, or inspect the logs below.
 
@@ -34,14 +42,14 @@ If the plugin cannot open, use Konsole:
 
 ```sh
 # Reinstall this beta version
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- reinstall
 # Uninstall
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- uninstall
 # Offline uninstall of an existing installation
-python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
+python3 ~/homebrew/plugins/MSIClawA8Z2EController/installer.py uninstall
 ```
 
-Cleanup removes only `plugins/ClawControls`, `settings/ClawControls`, `data/ClawControls` and `logs/ClawControls` beneath Decky home. It does not remove Decky, other plugins or modify the read-only OS. Shared Decky ordering/hidden/disabled records remain; restore a hidden or disabled plugin in Decky settings if necessary. System journal entries follow the system retention policy.
+Cleanup removes only `plugins/MSIClawA8Z2EController`, `settings/MSIClawA8Z2EController`, `data/MSIClawA8Z2EController` and `logs/MSIClawA8Z2EController` beneath Decky home. It does not remove Decky, other plugins or modify the read-only OS. Shared Decky ordering/hidden/disabled records remain; restore a hidden or disabled plugin in Decky settings if necessary. System journal entries follow the system retention policy.
 
 **Uninstalling or reinstalling does not reset hardware settings.** Controller settings may persist and affect Windows. Apply desired values explicitly before uninstalling; the plugin does not guess factory defaults. No HHD installation, InputPlumber changes or persistent background service is required.
 
@@ -58,7 +66,7 @@ Target environment supplied by the user: MSI Claw A8 BZ2EM, SteamOS 3.9.5 and De
 ## Troubleshooting and hardware acceptance
 
 ```sh
-journalctl -u claw-controls-maintenance --no-pager -n 100
+journalctl -u msi-claw-a8-z2e-controller-maintenance --no-pager -n 100
 systemctl status plugin_loader.service
 ```
 

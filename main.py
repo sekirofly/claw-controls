@@ -18,7 +18,7 @@ try:
     import decky
     log = decky.logger
 except ImportError:  # allows local, dependency-free tests
-    log = logging.getLogger("ClawControls")
+    log = logging.getLogger("MSIClawA8Z2EController")
 
 HIDRAW_CLASS = Path("/sys/class/hidraw")
 MODES = ("macro", "combination", "disabled")
@@ -64,13 +64,13 @@ def _write(device, attr, value):
 
 
 def _error(exc):
-    log.warning("Claw Controls operation failed: %s", exc)
+    log.warning("MSI Claw A8 Z2E Controller operation failed: %s", exc)
     return {"ok": False, "error": str(exc)}
 
 
 class Plugin:
     async def _main(self):
-        log.info("Claw Controls 0.2.0-beta.2 loaded. euid=%s", os.geteuid())
+        log.info("MSI Claw A8 Z2E Controller 0.2.0-beta.3 loaded. euid=%s", os.geteuid())
 
     async def maintenance(self, action: str):
         """Run outside the Decky service so uninstall/reinstall can stop Decky safely."""
@@ -79,18 +79,18 @@ class Plugin:
             if action not in ('uninstall', 'reinstall'):
                 raise ValueError('Unsupported maintenance action')
             plugin_dir = Path(__file__).resolve().parent
-            spec = importlib.util.spec_from_file_location('claw_controls_installer', plugin_dir / 'installer.py')
+            spec = importlib.util.spec_from_file_location('msi_claw_a8_z2e_controller_installer', plugin_dir / 'installer.py')
             installer = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(installer)
             home = installer.validate_home(os.environ['DECKY_HOME'])
-            if plugin_dir != home / 'plugins' / 'ClawControls':
+            if plugin_dir != home / 'plugins' / 'MSIClawA8Z2EController':
                 raise ValueError('Please use the terminal installer for this nonstandard installation')
-            directory = Path(tempfile.mkdtemp(prefix='claw-controls-maintenance-', dir='/run'))
+            directory = Path(tempfile.mkdtemp(prefix='msi-claw-a8-z2e-controller-maintenance-', dir='/run'))
             try:
                 for name in ('installer.py', 'maintenance_runner.py'):
                     shutil.copyfile(plugin_dir / name, directory / name)
                 result = subprocess.run([
-                    'systemd-run', '--unit=claw-controls-maintenance', '--on-active=3s',
+                    'systemd-run', '--unit=msi-claw-a8-z2e-controller-maintenance', '--on-active=3s',
                     '--collect', '/usr/bin/python3', str(directory / 'maintenance_runner.py'),
                     action, '--decky-home', str(home)
                 ], capture_output=True, text=True, timeout=15)
@@ -99,7 +99,7 @@ class Plugin:
             except Exception:
                 shutil.rmtree(directory)
                 raise
-            return {'ok': True, 'message': '维护任务已安排。Decky 将短暂重启；失败详情见 journalctl -u claw-controls-maintenance。'}
+            return {'ok': True, 'message': '维护任务已安排。Decky 将短暂重启；失败详情见 journalctl -u msi-claw-a8-z2e-controller-maintenance。'}
         except Exception as exc:
             return _error(exc)
 

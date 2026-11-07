@@ -1,11 +1,11 @@
 {
-  "name": "Claw Controls",
+  "name": "MSI Claw A8 Z2E Controller",
   "author": "sekirofly",
   "flags": [
     "root"
   ],
   "api_version": 1,
-  "version": "0.2.0-beta.2",
+  "version": "0.2.0-beta.3",
   "publish": {
     "tags": [
       "system",

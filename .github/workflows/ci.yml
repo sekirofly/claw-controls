@@ -25,5 +25,5 @@ jobs:
       - run: python scripts/package.py
       - uses: actions/upload-artifact@v4
         with:
-          name: ClawControls
+          name: MSIClawA8Z2EController
           path: release/*

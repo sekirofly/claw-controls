@@ -13,7 +13,7 @@ class InstallerTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.home = Path(self.temp.name).resolve() / 'homebrew'
-        self.target = self.home / 'plugins' / 'ClawControls'
+        self.target = self.home / 'plugins' / 'MSIClawA8Z2EController'
         self.target.mkdir(parents=True)
         (self.target / 'plugin.json').write_text(json.dumps({'name': installer.NAME}))
         (self.target / 'old.txt').write_text('old')
@@ -22,7 +22,7 @@ class InstallerTests(unittest.TestCase):
         (self.other / 'keep.txt').write_text('keep')
 
     def test_uninstall_only_own_files(self):
-        own = self.home / 'settings' / 'ClawControls'
+        own = self.home / 'settings' / 'MSIClawA8Z2EController'
         own.mkdir(parents=True)
         (own / 'settings.json').write_text('{}')
         with patch.object(installer, 'service'):
@@ -61,6 +61,13 @@ class InstallerTests(unittest.TestCase):
             installer.transact(self.home, 'uninstall')
         self.assertTrue((self.target / 'old.txt').exists())
 
+    def test_legacy_installation_blocks_duplicate(self):
+        legacy = self.home / 'plugins' / 'ClawControls'
+        legacy.mkdir()
+        with self.assertRaisesRegex(ValueError, 'Uninstall the old'):
+            installer.validate_home(self.home)
+        self.assertTrue(legacy.exists())
+
     def test_stop_failure_keeps_files(self):
         with patch.object(installer, 'service', side_effect=RuntimeError('cannot stop')):
             with self.assertRaises(RuntimeError):
@@ -96,7 +103,7 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((self.other / 'keep.txt').exists())
 
     def test_archive_traversal(self):
-        for filename in ('../escape', 'ClawControls/../../escape', '/etc/passwd', 'Other/main.py', 'ClawControls\\escape'):
+        for filename in ('../escape', 'MSIClawA8Z2EController/../../escape', '/etc/passwd', 'Other/main.py', 'MSIClawA8Z2EController\\escape'):
             data = io.BytesIO()
             with zipfile.ZipFile(data, 'w') as archive:
                 archive.writestr(filename, 'bad')
@@ -106,7 +113,7 @@ class InstallerTests(unittest.TestCase):
     def test_archive_symlink(self):
         data = io.BytesIO()
         with zipfile.ZipFile(data, 'w') as archive:
-            info = zipfile.ZipInfo('ClawControls/link')
+            info = zipfile.ZipInfo('MSIClawA8Z2EController/link')
             info.external_attr = 0o120777 << 16
             archive.writestr(info, '/etc')
         with self.assertRaises(ValueError):

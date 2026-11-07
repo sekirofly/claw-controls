@@ -1,19 +1,27 @@
-# MSI Claw A8 Z2E — Back Buttons & Rumble
+# MSI Claw A8 Z2E Controller
 
 [English](README.md) | 简体中文
+
+**beta.3 已全链路更名，不自动迁移旧版。** 先卸载旧插件，再执行下方新安装命令：
+
+```sh
+python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
+```
+
+新版显示名、内部标识、安装目录和安装包均已更名。旧目录仍存在时安装器会拒绝安装，避免出现两份插件。卸载不会重置硬件设置。
 
 > **真机反馈更新：**一位 A8 用户安装 beta.1 返回游戏模式后内置手柄消失，未卸载、正常重启后恢复；随后确认震动调节有效。首次断连原因仍未定位。beta.2 修改模式选择界面，没有修改控制器驱动或安装时的服务重启机制。安装前保存工作，安装后安排正常重启；不能认为断连问题已经修复。
 
 beta.2 用主页上的三个按钮替代弹出列表，分别显示“硬件当前模式”和“待应用模式”。选择按钮不会写硬件；点击应用后还需确认，并读回验证。调整震动不再清除待应用的模式。实际硬件模式切换仍待验证。
 
-MSI Claw A8 controller settings for Decky Loader. **Experimental 0.2.0-beta.2; not yet tested on physical hardware.**
+MSI Claw A8 controller settings for Decky Loader. **Experimental 0.2.0-beta.3; not yet tested on physical hardware.**
 
 ## 在 SteamOS 一条命令安装
 
 先安装 Decky Loader，在桌面模式打开 **Konsole**，粘贴：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash
 ```
 
 需要 `python3`、`curl`、`sudo` 和 systemd。终端可能要求 sudo 密码。默认 Decky 路径为当前用户的 `~/homebrew`；非标准位置使用 `bash -s -- install --decky-home /absolute/homebrew`。不要以 root 身份直接启动默认命令，否则默认主目录是 `/root`。
@@ -22,24 +30,24 @@ curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-butt
 
 ## 卸载 / 干净重装
 
-插件内有 **一键干净卸载** 和 **一键干净重装当前版本**，点击后确认即可。下载在停服务前完成；Decky 会短暂重启，其他插件也会暂时断开。安装失败会尝试恢复旧版本；恢复失败时保留 `.claw-controls-backup-*`。按钮提示“已安排”不等于任务成功；重启后检查状态，错误用下方日志命令检查。
+插件内有 **一键干净卸载** 和 **一键干净重装当前版本**，点击后确认即可。下载在停服务前完成；Decky 会短暂重启，其他插件也会暂时断开。安装失败会尝试恢复旧版本；恢复失败时保留 `.msi-claw-a8-z2e-controller-backup-*`。按钮提示“已安排”不等于任务成功；重启后检查状态，错误用下方日志命令检查。
 
 插件打不开时用终端恢复：
 
 ```sh
 # 干净重装同一测试版本
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- reinstall
 # 干净卸载
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.2/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- uninstall
 ```
 
 安装后也可离线卸载：
 
 ```sh
-python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
+python3 ~/homebrew/plugins/MSIClawA8Z2EController/installer.py uninstall
 ```
 
-“干净”删除 `plugins/ClawControls`、`settings/ClawControls`、`data/ClawControls`、`logs/ClawControls`。不删除其他插件、Decky 或修改系统只读分区。共享的 Decky 插件排序/隐藏记录不在文件清理范围内；以前隐藏或禁用过插件时，请在 Decky 设置恢复。系统日志按 systemd 策略保留。
+“干净”删除 `plugins/MSIClawA8Z2EController`、`settings/MSIClawA8Z2EController`、`data/MSIClawA8Z2EController`、`logs/MSIClawA8Z2EController`。不删除其他插件、Decky 或修改系统只读分区。共享的 Decky 插件排序/隐藏记录不在文件清理范围内；以前隐藏或禁用过插件时，请在 Decky 设置恢复。系统日志按 systemd 策略保留。
 
 **卸载、重装不重置硬件。** 控制器设置可能保存在设备中并影响 Windows。需要更改时先显式应用，不猜测“出厂默认值”。不安装 HHD、不修改 InputPlumber、不创建常驻服务。
 
@@ -56,7 +64,7 @@ python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
 ## 故障诊断与真机验收
 
 ```sh
-journalctl -u claw-controls-maintenance --no-pager -n 100
+journalctl -u msi-claw-a8-z2e-controller-maintenance --no-pager -n 100
 systemctl status plugin_loader.service
 ```
 
