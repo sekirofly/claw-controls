@@ -11,6 +11,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import importlib.util
 from pathlib import Path
 
 try:
@@ -77,9 +78,11 @@ class Plugin:
             _check_root()
             if action not in ('uninstall', 'reinstall'):
                 raise ValueError('Unsupported maintenance action')
-            from installer import validate_home
-            home = validate_home(os.environ['DECKY_HOME'])
             plugin_dir = Path(__file__).resolve().parent
+            spec = importlib.util.spec_from_file_location('claw_controls_installer', plugin_dir / 'installer.py')
+            installer = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(installer)
+            home = installer.validate_home(os.environ['DECKY_HOME'])
             if plugin_dir != home / 'plugins' / 'ClawControls':
                 raise ValueError('Please use the terminal installer for this nonstandard installation')
             directory = Path(tempfile.mkdtemp(prefix='claw-controls-maintenance-'))

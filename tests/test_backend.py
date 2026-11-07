@@ -44,6 +44,15 @@ class BackendTests(unittest.TestCase):
         with patch.object(main, '_write'):
             self.assertFalse(asyncio.run(self.plugin.set_rumble(10, 10))['ok'])
 
+    def test_maintenance_imports_without_plugin_on_sys_path(self):
+        import sys
+        # The loader imports main.py by file location, not as an installed package.
+        source = Path(main.__file__).resolve().parent
+        with patch.dict(main.os.environ, {'DECKY_HOME': str(self.root)}), patch.object(sys, 'path', [p for p in sys.path if p not in ('', str(source))]):
+            result = asyncio.run(self.plugin.maintenance('reinstall'))
+        self.assertFalse(result['ok'])
+        self.assertIn('Decky not found', result['error'])
+
 
 if __name__ == '__main__':
     unittest.main()

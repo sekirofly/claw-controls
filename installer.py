@@ -56,8 +56,9 @@ def unpack(data, destination):
 
 def validate_home(home):
     home = Path(home).absolute()
-    if home == Path('/') or home.is_symlink() or home.resolve() != home:
-        raise ValueError("Decky home must be an absolute directory without symlinks")
+    home = home.resolve(strict=True)
+    if home == Path('/'):
+        raise ValueError("Decky home cannot be the filesystem root")
     if not (home / "plugins").is_dir():
         raise ValueError("Decky not found. Install Decky first or pass --decky-home.")
     for section in ("plugins", "settings", "data", "logs"):
