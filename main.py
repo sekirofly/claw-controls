@@ -85,7 +85,7 @@ class Plugin:
             home = installer.validate_home(os.environ['DECKY_HOME'])
             if plugin_dir != home / 'plugins' / 'ClawControls':
                 raise ValueError('Please use the terminal installer for this nonstandard installation')
-            directory = Path(tempfile.mkdtemp(prefix='claw-controls-maintenance-'))
+            directory = Path(tempfile.mkdtemp(prefix='claw-controls-maintenance-', dir='/run'))
             try:
                 for name in ('installer.py', 'maintenance_runner.py'):
                     shutil.copyfile(plugin_dir / name, directory / name)

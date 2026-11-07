@@ -8,5 +8,5 @@ if __name__ == '__main__':
         main()
     finally:
         directory = Path(__file__).resolve().parent
-        if directory.parent == Path('/tmp') and directory.name.startswith('claw-controls-maintenance-'):
+        if directory.parent == Path('/run') and directory.name.startswith('claw-controls-maintenance-'):
             shutil.rmtree(directory)

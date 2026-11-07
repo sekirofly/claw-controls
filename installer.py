@@ -147,7 +147,7 @@ def main():
     if os.geteuid() != 0:
         os.execvp('sudo', ['sudo', 'python3', str(Path(__file__).resolve()), args.action, '--decky-home', str(home)])
     import fcntl
-    with open('/run/lock/claw-controls.lock', 'w') as lock:
+    with open('/run/claw-controls.lock', 'w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         with tempfile.TemporaryDirectory(prefix='claw-controls-') as directory:
             staged = None
