@@ -70,7 +70,7 @@ def _error(exc):
 
 class Plugin:
     async def _main(self):
-        log.info("MSI Claw A8 Z2E Controller 0.2.0-beta.3 loaded. euid=%s", os.geteuid())
+        log.info("MSI Claw A8 Z2E Controller 0.2.0-beta.4 loaded. euid=%s", os.geteuid())
 
     async def maintenance(self, action: str):
         """Run outside the Decky service so uninstall/reinstall can stop Decky safely."""
@@ -143,7 +143,7 @@ class Plugin:
                 raise ValueError("震动强度必须在 0–100 之间。")
             device = _find_device()
             old = _read_raw(device)
-            # Only write on explicit Apply and only when values differ.
+            # Frontend serializes/coalesces user changes; only write changed values.
             if old["left"] != left:
                 _write(device, "rumble_intensity_left", left)
             if old["right"] != right:

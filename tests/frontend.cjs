@@ -8,9 +8,11 @@ const React = require('react');
 const {create, act} = require('react-test-renderer');
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
-test('mode selection stays local; confirmation writes once; rumble does not discard selection', async () => {
+test('instant mode changes, coalesced rumble, serialized writes and failure recovery', async () => {
   const calls = [];
   let modal;
+  let failure = false;
+  let hold;
   let hardware = {ok: true, mode: 'macro', left: 80, right: 90};
   const ui = {};
   for (const name of ['ButtonItem', 'PanelSection', 'PanelSectionRow', 'SliderField', 'ConfirmModal']) {
@@ -19,6 +21,8 @@ test('mode selection stays local; confirmation writes once; rumble does not disc
   ui.showModal = element => { modal = element; };
   const api = {definePlugin: factory => factory, callable: name => async (...args) => {
     calls.push([name, ...args]);
+    if (name === 'set_rumble' && hold) await hold;
+    if (name === 'set_mode' && failure) return {ok: false, error: 'simulated failure'};
     if (name === 'set_mode') hardware = {...hardware, mode: args[0]};
     if (name === 'set_rumble') hardware = {...hardware, left: args[0], right: args[1]};
     return {...hardware};
@@ -40,24 +44,41 @@ test('mode selection stays local; confirmation writes once; rumble does not disc
   assert.deepEqual(calls, [['get_state']]);
   await act(async () => { button('Combination /').props.onClick(); });
   assert.match(text(), /Combination \/ 组合键/);
-  assert.match(text(), /（未写入）/);
-  assert.equal(hardware.mode, 'macro');
-  assert.equal(button('应用背键模式').props.disabled, false);
+  assert.equal(hardware.mode, 'combination');
+  const noDuplicate = calls.length;
+  await act(async () => { button('Combination /').props.onClick(); });
+  assert.equal(calls.length, noDuplicate);
+  assert.equal(button('应用背键模式'), undefined);
+  assert.equal(modal, undefined);
   await act(async () => { button('Disabled /').props.onClick(); });
-  assert.deepEqual(calls, [['get_state']]);
-  await act(async () => { button('应用背键模式').props.onClick(); });
-  assert.equal(modal.props.strCancelButtonText, '取消');
-  assert.deepEqual(calls, [['get_state']]); // opening/dismissing the modal is not a write
-  modal = undefined;
-  await act(async () => { renderer.root.findAllByType('SliderField')[0].props.onChange(40); });
-  await act(async () => { button('应用震动强度').props.onClick(); });
-  assert.equal(hardware.mode, 'macro');
+  assert.equal(hardware.mode, 'disabled');
+  const sliders = () => renderer.root.findAllByType('SliderField');
+  await act(async () => { sliders()[0].props.onChange(60); sliders()[0].props.onChange(40); sliders()[1].props.onChange(30); });
+  assert.equal(calls.filter(c => c[0] === 'set_rumble').length, 0);
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 250)); });
+  assert.deepEqual(calls.filter(c => c[0] === 'set_rumble'), [['set_rumble', 40, 30]]);
+  assert.equal(hardware.mode, 'disabled');
   assert.match(text(), /● .*Disabled/);
-  await act(async () => { button('应用背键模式').props.onClick(); });
-  await act(async () => { modal.props.onOK(); });
-  assert.deepEqual(calls.filter(call => call[0] === 'set_mode'), [['set_mode', 'disabled']]);
-  assert.equal(button('应用背键模式').props.disabled, true);
+  let release;
+  hold = new Promise(resolve => { release = resolve; });
+  await act(async () => { sliders()[0].props.onChange(50); await new Promise(resolve => setTimeout(resolve, 250)); });
+  const count = calls.length;
+  await act(async () => { sliders()[0].props.onChange(70); button('Macro /').props.onClick(); });
+  assert.equal(calls.length, count); // no concurrent mode write while rumble is in flight
+  hold = undefined;
+  await act(async () => { release(); });
+  assert.equal(hardware.left, 70);
+  assert.equal(hardware.right, 30);
+  assert.equal(hardware.mode, 'macro');
+  failure = true;
+  await act(async () => { button('Combination /').props.onClick(); });
+  assert.equal(hardware.mode, 'macro');
+  assert.match(text(), /保存失败/);
+  assert.match(text(), /● .*Macro/);
+  assert.equal(calls.at(-1)[0], 'get_state');
+  await act(async () => { sliders()[1].props.onChange(20); });
   await act(async () => { renderer.unmount(); });
+  assert.equal(hardware.right, 20); // closing the panel flushes the final pending value
 });
 
 function moduleParent() { return module; }

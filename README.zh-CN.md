@@ -2,7 +2,11 @@
 
 [English](README.md) | 简体中文
 
-**beta.3 已全链路更名，不自动迁移旧版。** 先卸载旧插件，再执行下方新安装命令：
+> **测试设备安装/更新后必须正常重启，再进入 Gaming Mode。** 用户已确认 beta.3 重启后震动和三种背键模式正常。直接切回游戏模式仍会丢失内置控制器，原因未定位；beta.4 不声称修复该问题。请先保存工作。
+
+beta.4 去掉应用按钮：模式点击即切换；震动滑块数值即时跟随，停顿约 200 毫秒自动保存。连续输入会合并，写入串行并读回；错误时停止后续写入并刷新实际状态。关闭面板会提交最后待保存的滑块值。打开面板本身不写硬件。新交互仍待真机验证。
+
+**只有还在用旧名 Claw Controls 的用户需要先卸载。beta.3 用户可直接覆盖更新，无需卸载。** 旧名版本的卸载命令：
 
 ```sh
 python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
@@ -10,18 +14,16 @@ python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
 
 新版显示名、内部标识、安装目录和安装包均已更名。旧目录仍存在时安装器会拒绝安装，避免出现两份插件。卸载不会重置硬件设置。
 
-> **真机反馈更新：**一位 A8 用户安装 beta.1 返回游戏模式后内置手柄消失，未卸载、正常重启后恢复；随后确认震动调节有效。首次断连原因仍未定位。beta.2 修改模式选择界面，没有修改控制器驱动或安装时的服务重启机制。安装前保存工作，安装后安排正常重启；不能认为断连问题已经修复。
 
-beta.2 用主页上的三个按钮替代弹出列表，分别显示“硬件当前模式”和“待应用模式”。选择按钮不会写硬件；点击应用后还需确认，并读回验证。调整震动不再清除待应用的模式。实际硬件模式切换仍待验证。
 
-MSI Claw A8 controller settings for Decky Loader. **Experimental 0.2.0-beta.3; not yet tested on physical hardware.**
+MSI Claw A8 controller settings for Decky Loader. **Experimental 0.2.0-beta.4; not yet tested on physical hardware.**
 
 ## 在 SteamOS 一条命令安装
 
 先安装 Decky Loader，在桌面模式打开 **Konsole**，粘贴：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash
 ```
 
 需要 `python3`、`curl`、`sudo` 和 systemd。终端可能要求 sudo 密码。默认 Decky 路径为当前用户的 `~/homebrew`；非标准位置使用 `bash -s -- install --decky-home /absolute/homebrew`。不要以 root 身份直接启动默认命令，否则默认主目录是 `/root`。
@@ -36,9 +38,9 @@ curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-butt
 
 ```sh
 # 干净重装同一测试版本
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash -s -- reinstall
 # 干净卸载
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.3/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash -s -- uninstall
 ```
 
 安装后也可离线卸载：
@@ -49,12 +51,12 @@ python3 ~/homebrew/plugins/MSIClawA8Z2EController/installer.py uninstall
 
 “干净”删除 `plugins/MSIClawA8Z2EController`、`settings/MSIClawA8Z2EController`、`data/MSIClawA8Z2EController`、`logs/MSIClawA8Z2EController`。不删除其他插件、Decky 或修改系统只读分区。共享的 Decky 插件排序/隐藏记录不在文件清理范围内；以前隐藏或禁用过插件时，请在 Decky 设置恢复。系统日志按 systemd 策略保留。
 
-**卸载、重装不重置硬件。** 控制器设置可能保存在设备中并影响 Windows。需要更改时先显式应用，不猜测“出厂默认值”。不安装 HHD、不修改 InputPlumber、不创建常驻服务。
+**卸载、重装不重置硬件。** 控制器设置可能保存在设备中并影响 Windows。需要更改时先设置所需值，不猜测“出厂默认值”。不安装 HHD、不修改 InputPlumber、不创建常驻服务。
 
 ## 功能与兼容性
 
 - M1/M2 共用模式：macro / combination / disabled；不修改具体按键映射。
-- 左右马达独立 0–100%，仅点击“应用”才写入并读回确认。
+- 左右马达独立 0–100%，滑动停顿约 200 毫秒后自动保存并读回确认；连续拖动会合并，写入不会并发。
 - 动态发现 `/sys/class/hidraw/*/device` 的三个既有驱动属性。
 - 没设备、多个候选设备、异常参数或读回不一致时报错。
 - 左右马达是两次独立写入；第二次失败时第一项可能已生效，请刷新查看实际状态。
@@ -62,6 +64,20 @@ python3 ~/homebrew/plugins/MSIClawA8Z2EController/installer.py uninstall
 目标为用户提供的 MSI Claw A8 BZ2EM / SteamOS 3.9.5 / Decky 3.3.1 环境，尚未进行兼容性认证。需要内核提供 `mkeys_function`、`rumble_intensity_left`、`rumble_intensity_right`。root 用于 sysfs 写入和显式安装维护。维护仅操作固定插件目录、仓库和版本，不接受任意命令/URL。
 
 ## 故障诊断与真机验收
+
+### 安装后手柄消失
+
+[DeckyPlumber 的 README](https://github.com/aarron-lee/DeckyPlumber#quick-install--update)也要求安装后重启；其安装脚本重启 `plugin_loader.service`，没有自动重启 InputPlumber 或重新枚举控制器的恢复逻辑。这不能证明两个插件的原因相同。
+
+目前无法确定是物理设备、InputPlumber 虚拟手柄还是 Steam 的发现过程异常。不会自动重启 InputPlumber、修改它的配置或复位 USB。要进一步定位，请在**断连时、重启前**记录一次，恢复后再记录一次：
+
+```sh
+sudo bash ~/homebrew/plugins/MSIClawA8Z2EController/diagnostics.sh > ~/msi-controller-before-reboot.txt
+# 正常重启后：
+sudo bash ~/homebrew/plugins/MSIClawA8Z2EController/diagnostics.sh > ~/msi-controller-after-reboot.txt
+```
+
+脚本只读取服务状态、输入/USB 设备列表及近期日志，不改变硬件、服务或上传数据。需要这两份报告才能选择有依据的免整机重启方案。
 
 ```sh
 journalctl -u msi-claw-a8-z2e-controller-maintenance --no-pager -n 100

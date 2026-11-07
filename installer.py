@@ -13,7 +13,7 @@ import tempfile
 import urllib.request
 import zipfile
 
-VERSION = "0.2.0-beta.3"
+VERSION = "0.2.0-beta.4"
 REPO = "https://github.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky"
 NAME = "MSI Claw A8 Z2E Controller"
 FOLDER = "MSIClawA8Z2EController"
@@ -163,6 +163,7 @@ def main():
                 staged = unpack(data, Path(directory))
             transact(home, args.action, staged)
     print('MSI Claw A8 Z2E Controller: ' + args.action + ' complete. Hardware settings unchanged.')
+    print('IMPORTANT: Save your work and reboot normally before returning to Gaming Mode. Controller detection after a live Decky restart is not reliable on the tested A8.')
 
 
 if __name__ == '__main__':
