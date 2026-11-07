@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ButtonItem, DropdownItem, PanelSection, PanelSectionRow, SliderField, ConfirmModal, showModal } from '@decky/ui';
 import { callable, definePlugin } from '@decky/api';
-import { FaGamepad } from 'react-icons/fa';
 
 type State = { ok: boolean; error?: string; mode: string; left: number; right: number };
 const read = callable<[], State>('get_state');
@@ -61,4 +60,4 @@ function Content() {
     </PanelSection>
   </>;
 }
-export default definePlugin(() => ({name: 'Claw Controls', content: <Content />, icon: <FaGamepad />}));
+export default definePlugin(() => ({name: 'Claw Controls', content: <Content />, icon: <span>🎮</span>}));

@@ -74,4 +74,4 @@ Node 22、pnpm 11.25.0、Python 3.11+。TypeScript 跳过第三方库声明文�
 
 ## 来源与许可
 
-由用户提供的 `ClawControls_Decky_v0.1.0.zip` 原型整理。前端改用官方 `@decky/api` / `@decky/ui`，不手写内部连接协议。项目 MIT；第三方依赖保留各自许可。
+由用户提供的 `ClawControls_Decky_v0.1.0.zip` 原型整理。前端改用官方 `@decky/api` / `@decky/ui`，不手写内部连接协议。项目 MIT；第三方依赖保留各自许可。安装包附带 SteamDeckHomebrew Team 的 `@decky/api` 1.1.3 原始源码及 LGPL-2.1 许可，以及可重新构建前端的源码/配置；可修改替换该库并重新构建。UI 和 React 由 Decky 主程序提供。
