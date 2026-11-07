@@ -11,7 +11,7 @@ output = root / 'release'
 output.mkdir(exist_ok=True)
 archive = output / 'ClawControls.zip'
 with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as bundle:
-    for name in ('main.py', 'installer.py', 'maintenance_runner.py', 'plugin.json', 'package.json', 'dist/index.js', 'README.md', 'LICENSE'):
+    for name in ('main.py', 'installer.py', 'maintenance_runner.py', 'plugin.json', 'package.json', 'dist/index.js', 'README.md', 'README.zh-CN.md', 'LICENSE'):
         bundle.write(root / name, 'ClawControls/' + name)
     # Supply the LGPL API source and license with the bundled frontend.
     api = root / 'node_modules' / '@decky' / 'api'
