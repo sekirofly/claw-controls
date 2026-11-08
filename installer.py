@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""MSI Claw A8 Z2E Controller installer. Python standard library; Linux/systemd only."""
+"""MSI Claw A8 Back Buttons & Rumble installer. Python standard library; Linux/systemd only."""
 import argparse
 import hashlib
 import io
@@ -13,15 +13,15 @@ import tempfile
 import urllib.request
 import zipfile
 
-VERSION = "0.2.0-beta.4"
-REPO = "https://github.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky"
-NAME = "MSI Claw A8 Z2E Controller"
-FOLDER = "MSIClawA8Z2EController"
+VERSION = "1.0.0"
+REPO = "https://github.com/sekirofly/msi-claw-a8-back-buttons-rumble"
+NAME = "MSI Claw A8 Back Buttons & Rumble"
+FOLDER = "msi-claw-a8-back-buttons-rumble"
 SERVICE = "plugin_loader.service"
 
 
 def fetch(url, limit=16 * 1024 * 1024):
-    request = urllib.request.Request(url, headers={"User-Agent": "MSIClawA8Z2EController/" + VERSION})
+    request = urllib.request.Request(url, headers={"User-Agent": "msi-claw-a8-back-buttons-rumble/" + VERSION})
     with urllib.request.urlopen(request, timeout=45) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -61,9 +61,6 @@ def validate_home(home):
         raise ValueError("Decky home cannot be the filesystem root")
     if not (home / "plugins").is_dir():
         raise ValueError("Decky not found. Install Decky first or pass --decky-home.")
-    legacy = home / 'plugins' / 'ClawControls'
-    if legacy.exists() or legacy.is_symlink():
-        raise ValueError('Uninstall the old Claw Controls plugin before installing MSI Claw A8 Z2E Controller')
     for section in ("plugins", "settings", "data", "logs"):
         parent = home / section
         if parent.is_symlink():
@@ -80,7 +77,7 @@ def validate_home(home):
         if candidate != target and manifest.is_file():
             try:
                 if json.loads(manifest.read_text())['name'] == NAME:
-                    raise ValueError("MSI Claw A8 Z2E Controller uses a different folder; uninstall it through Decky first")
+                    raise ValueError("MSI Claw A8 Back Buttons & Rumble uses a different folder; uninstall it through Decky first")
             except (json.JSONDecodeError, KeyError):
                 continue
     return home
@@ -97,7 +94,7 @@ def transact(home, action, staged=None):
     paths = [target]
     if action in ('uninstall', 'reinstall'):
         paths += [home / section / FOLDER for section in ('settings', 'data', 'logs')]
-    backup = Path(tempfile.mkdtemp(prefix='.msi-claw-a8-z2e-controller-backup-', dir=home))
+    backup = Path(tempfile.mkdtemp(prefix='.msi-claw-a8-back-buttons-rumble-backup-', dir=home))
     moved = []
     install_started = False
     stopped = False
@@ -150,20 +147,23 @@ def main():
     if os.geteuid() != 0:
         os.execvp('sudo', ['sudo', 'python3', str(Path(__file__).resolve()), args.action, '--decky-home', str(home)])
     import fcntl
-    with open('/run/msi-claw-a8-z2e-controller.lock', 'w') as lock:
+    with open('/run/msi-claw-a8-back-buttons-rumble.lock', 'w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        with tempfile.TemporaryDirectory(prefix='msi-claw-a8-z2e-controller-') as directory:
+        with tempfile.TemporaryDirectory(prefix='msi-claw-a8-back-buttons-rumble-') as directory:
             staged = None
             if args.action != 'uninstall':
                 base = REPO + '/releases/download/v' + VERSION + '/'
-                data = fetch(base + 'MSIClawA8Z2EController.zip')
-                expected = fetch(base + 'MSIClawA8Z2EController.zip.sha256', 1024).decode().split()[0]
+                data = fetch(base + 'msi-claw-a8-back-buttons-rumble.zip')
+                expected = fetch(base + 'msi-claw-a8-back-buttons-rumble.zip.sha256', 1024).decode().split()[0]
                 if len(expected) != 64 or hashlib.sha256(data).hexdigest() != expected:
                     raise ValueError('Release checksum mismatch; existing installation unchanged')
                 staged = unpack(data, Path(directory))
             transact(home, args.action, staged)
-    print('MSI Claw A8 Z2E Controller: ' + args.action + ' complete. Hardware settings unchanged.')
+    print('MSI Claw A8 Back Buttons & Rumble: ' + args.action + ' complete. Hardware settings unchanged.')
     print('IMPORTANT: Save your work and reboot normally before returning to Gaming Mode. Controller detection after a live Decky restart is not reliable on the tested A8.')
+    if args.action != 'uninstall':
+        print('If rumble or controller behavior remains abnormal after reboot, an EC reset may be needed. It resolved a reported loss of rumble on the tested A8; it is not required for every installation.')
+        print('Follow MSI official EC reset guidance: https://www.msi.com/support/technical_details/HH_EC_Reset')
 
 
 if __name__ == '__main__':

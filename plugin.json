@@ -1,11 +1,11 @@
 {
-  "name": "MSI Claw A8 Z2E Controller",
+  "name": "MSI Claw A8 Back Buttons & Rumble",
   "author": "sekirofly",
   "flags": [
     "root"
   ],
   "api_version": 1,
-  "version": "0.2.0-beta.4",
+  "version": "1.0.0",
   "publish": {
     "tags": [
       "system",

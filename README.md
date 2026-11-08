@@ -1,111 +1,87 @@
-# MSI Claw A8 Z2E Controller
+# MSI Claw A8 Back Buttons & Rumble
 
 English | [简体中文](README.zh-CN.md)
 
-> **Reboot required after installation/update on the tested A8.** The user confirmed rumble and all three modes work after reboot on beta.3. Returning to Gaming Mode immediately after installation still loses the controller. The cause is unresolved; beta.4 does not claim to fix it. Save work, install, then reboot normally before using Gaming Mode.
+A Decky Loader plugin for **MSI Claw A8 (AMD Ryzen Z2 Extreme / BZ2EM)**. Switch M1/M2 back-button modes and adjust left/right rumble strength. Community software, not an official MSI product. Compatibility with other Claw models is not established.
 
-Beta.4 removes Apply buttons: mode buttons switch immediately; rumble sliders update visually immediately and save after a 200 ms pause. Changes are serialized, read back, and errors stop queued writes and refresh actual hardware state. Closing the panel flushes the final pending slider value. No hardware write is made merely by opening the panel. This new interaction has not yet been tested on hardware.
+## Install
 
-
-
-A Decky Loader plugin for **MSI Claw A8 (AMD Ryzen Z2 Extreme, BZ2EM)**: switch the shared M1/M2 back-button mode and adjust left/right rumble strength independently.
-
-Z2E abbreviates Z2 Extreme. MSI identifies the device as [Claw A8 BZ2EM](https://www.msi.com/Handheld/Claw-A8-BZ2EMX/Specification). Compatibility with other Claw models, including the Claw 8 AI+ family, is not established. This is a community project, not an official MSI product.
-
-**Experimental v0.2.0-beta.4 — this release has not been tested on physical hardware.** Display name, plugin identity, package and installation directory now use MSI Claw A8 Z2E Controller. There is no automatic migration from Claw Controls.
-
-**Only users still on the old Claw Controls name must uninstall it first. Beta.3 users can update directly without uninstalling:**
+Install Decky Loader first. In SteamOS Desktop Mode, open Konsole and run as your normal desktop user:
 
 ```sh
-python3 ~/homebrew/plugins/ClawControls/installer.py uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash
 ```
 
-Then run the new installer below. The new installer refuses installation while the old plugin directory remains; it will not silently install a second copy. Uninstallation does not reset hardware settings.
+**Save your work and reboot after installation, update or reinstall, before returning to Gaming Mode.** On the tested A8, the embedded controller may not be detected after installation until a normal reboot. The underlying cause has not been established.
 
-## Install on SteamOS
+**If vibration disappears or controller behavior remains abnormal after reboot, an EC reset may be needed.** The tester reported that an EC reset restored vibration. This is a troubleshooting option, not a mandatory step for every installation or a guaranteed fix. Save work and follow [MSI's official EC reset instructions](https://www.msi.com/support/technical_details/HH_EC_Reset). The plugin never performs an EC reset automatically. After recovery, refresh the plugin and check the actual hardware values.
 
-Install Decky Loader first. Open **Konsole** in Desktop Mode and run as your normal desktop user:
+Requires Python 3, curl, sudo and systemd. The default Decky home is `~/homebrew`; for another location replace the final `bash` with `bash -s -- install --decky-home /absolute/homebrew`. Do not start the default command as root, which would select `/root/homebrew`.
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash
-```
+The installer verifies the version-pinned archive and SHA-256 checksum before stopping Decky. It briefly restarts Decky, interrupting other plugins, and attempts rollback if installation fails. A checksum detects corruption; it is not an independent signature. Read [install.sh](install.sh) and [installer.py](installer.py) to inspect the process.
 
-Requires Python 3, curl, sudo and systemd. Enter your sudo password if prompted. The default Decky location is `~/homebrew`. For a custom location, replace the final `bash` with `bash -s -- install --decky-home /absolute/homebrew`. Starting as root would incorrectly default to `/root/homebrew`.
+## Controls
 
-The installer downloads a version-pinned release, verifies its SHA-256 checksum and archive structure, then stops Decky to install. The checksum detects corruption; it is not an independent digital signature. Review [install.sh](install.sh) and [installer.py](installer.py) before running if desired.
+- **M1/M2 mode:** click Macro, Combination or Disabled to switch immediately. The mode is shared by both back buttons; individual button mappings are not changed.
+- **Rumble:** drag either slider to adjust 0–100%. The display follows immediately; a 200 ms pause saves the latest values automatically.
+- Changes are serialized and read back. Continuous slider adjustments are coalesced; closing the panel flushes the last pending value.
+- On failure, queued writes stop and actual values are refreshed. Left/right writes are separate, so one side may have changed if the other fails.
+- Opening the panel only reads hardware. Settings may persist in the controller and affect Windows. Uninstalling does not restore hardware defaults.
 
-## Clean uninstall and reinstall
+## Uninstall and reinstall
 
-The plugin provides **clean uninstall** and **clean reinstall of the current version** buttons, each with confirmation. Maintenance briefly restarts Decky, temporarily interrupting other plugins. A failed download leaves the installed version untouched. Installation failure triggers a rollback attempt; failed recovery preserves `.msi-claw-a8-z2e-controller-backup-*` directories.
-
-“Scheduled” means the maintenance task was accepted, not that it succeeded. Check the plugin after restart, or inspect the logs below.
-
-If the plugin cannot open, use Konsole:
+Use the plugin's **clean uninstall** or **clean reinstall current version** buttons. Both require confirmation. If the panel cannot open:
 
 ```sh
-# Reinstall this beta version
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash -s -- reinstall
+# Reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash -s -- reinstall
 # Uninstall
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-z2e-back-buttons-rumble-decky/v0.2.0-beta.4/install.sh | bash -s -- uninstall
-# Offline uninstall of an existing installation
-python3 ~/homebrew/plugins/MSIClawA8Z2EController/installer.py uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash -s -- uninstall
+# Offline uninstall
+python3 ~/homebrew/plugins/msi-claw-a8-back-buttons-rumble/installer.py uninstall
 ```
 
-Cleanup removes only `plugins/MSIClawA8Z2EController`, `settings/MSIClawA8Z2EController`, `data/MSIClawA8Z2EController` and `logs/MSIClawA8Z2EController` beneath Decky home. It does not remove Decky, other plugins or modify the read-only OS. Shared Decky ordering/hidden/disabled records remain; restore a hidden or disabled plugin in Decky settings if necessary. System journal entries follow the system retention policy.
+Cleanup affects only this plugin's `plugins/`, `settings/`, `data/` and `logs/` subdirectories named `msi-claw-a8-back-buttons-rumble`. Other plugins, Decky and hardware settings remain unchanged. Shared Decky ordering/hidden/disabled metadata and the system journal follow Decky's/system policies. A queued maintenance message is not proof of success; verify the result after restart. Failed rollback preserves `.msi-claw-a8-back-buttons-rumble-backup-*` for recovery.
 
-**Uninstalling or reinstalling does not reset hardware settings.** Controller settings may persist and affect Windows. Set desired values before uninstalling; the plugin does not guess factory defaults. No HHD installation, InputPlumber changes or persistent background service is required.
+## Compatibility and known limits
 
-## Features and requirements
+The tester reports working rumble and all three modes on MSI Claw A8 after reboot and, following a vibration-loss incident, an EC reset. Reported environment: SteamOS 3.9.5 / Decky 3.3.1. This is device-specific feedback, not broad compatibility certification. Reboot/EC recovery requirements remain known limitations of v1.0.0.
 
-- Shared M1/M2 mode: `macro`, `combination`, or `disabled`. Individual button mappings are unchanged.
-- Independent left/right rumble strength, 0–100%. Slider changes save automatically after a 200 ms pause, followed by read-back verification. Continuous dragging is coalesced; writes never overlap.
-- Dynamic discovery of existing kernel attributes under `/sys/class/hidraw/*/device`.
-- Missing/ambiguous devices, invalid input and read-back mismatches produce errors.
-- Left/right writes are separate: if the second fails, the first may already have applied. Refresh to inspect actual values.
+The kernel must provide `mkeys_function`, `rumble_intensity_left` and `rumble_intensity_right` under a unique `/sys/class/hidraw/*/device`. Missing or ambiguous devices are rejected. Root privileges are used for sysfs writes and explicitly requested maintenance. No firmware flashing, HHD installation, InputPlumber modification, USB reset or persistent background service is performed.
 
-Target environment supplied by the user: MSI Claw A8 BZ2EM, SteamOS 3.9.5 and Decky 3.3.1. Compatibility is not certified. The kernel must expose `mkeys_function`, `rumble_intensity_left` and `rumble_intensity_right`. Root is required for sysfs writes and explicitly requested maintenance. Maintenance is restricted to this plugin's fixed directories, repository and release version.
-
-## Troubleshooting and hardware acceptance
-
-### Installation-time controller disappearance
-
-[DeckyPlumber's README](https://github.com/aarron-lee/DeckyPlumber#quick-install--update) also instructs users to reboot. Its [installer](https://github.com/aarron-lee/DeckyPlumber/blob/main/install.sh) restarts `plugin_loader.service`; it does not implement an InputPlumber restart/re-enumeration recovery sequence. This is not proof that both plugins share the same cause.
-
-We have not established whether the physical device, InputPlumber's virtual controller, or Steam's discovery is failing. The plugin does not automatically restart InputPlumber, change its configuration, or reset USB devices. To investigate, run the read-only diagnostic **while disconnected, before reboot**, and again after recovery:
+## Diagnostics
 
 ```sh
-sudo bash ~/homebrew/plugins/MSIClawA8Z2EController/diagnostics.sh > ~/msi-controller-before-reboot.txt
-# After a normal reboot:
-sudo bash ~/homebrew/plugins/MSIClawA8Z2EController/diagnostics.sh > ~/msi-controller-after-reboot.txt
+journalctl -u msi-claw-a8-back-buttons-rumble-maintenance --no-pager -n 100
+sudo bash ~/homebrew/plugins/msi-claw-a8-back-buttons-rumble/diagnostics.sh
 ```
 
-The reports contain local service status, enumerated input/USB devices and recent service/kernel logs. Nothing is uploaded and no service or hardware state is changed. These two reports are needed before choosing a targeted no-reboot recovery.
+The diagnostic script only reads local service/device state and recent logs. Nothing is uploaded or changed.
 
-```sh
-journalctl -u msi-claw-a8-z2e-controller-maintenance --no-pager -n 100
-systemctl status plugin_loader.service
-```
+## Development
 
-Record the original hardware values first. Test read-only refresh, mode/rumble changes and their physical effects, reboot, clean reinstall, then uninstall while verifying other plugins remain intact. Automated tests do not replace device testing.
-
-## Build and release
-
-Node 22, pnpm 11.25.0 and Python 3.11+:
+Node 22, pnpm 11.25.0, Python 3.11+:
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm run build
+node --test tests/frontend.cjs
 python3 -m unittest discover -s tests -v
 python3 scripts/package.py
 ```
 
-TypeScript checks project code but skips third-party declaration checking because of Decky/React declaration differences. Linux CI builds, tests and packages the ZIP and checksum. Synchronize versions in package.json, plugin.json, installer.py, install.sh and documentation before a new release. Attach the CI archive and checksum together. Releases without device acceptance remain prereleases.
+Linux CI validates and packages the release. Tests simulate hardware; they do not replace device testing. TypeScript checks project code while skipping third-party declaration checks due to Decky/React declaration differences.
 
-## Decky store status
+| Item | Name |
+| --- | --- |
+| Decky display name | MSI Claw A8 Back Buttons & Rumble |
+| Repository / package / directory identifier | `msi-claw-a8-back-buttons-rumble` |
+| Release archive | `msi-claw-a8-back-buttons-rumble.zip` |
+| Maintenance unit | `msi-claw-a8-back-buttons-rumble-maintenance` |
 
-Not submitted or listed. The [official submission checklist](https://github.com/SteamDeckHomebrew/decky-plugin-database/blob/main/.github/PULL_REQUEST_TEMPLATE/plugin_addition.md), checked November 7, 2026, requires declaring that generative AI did not write most submitted code. This AI-assisted project cannot truthfully make that declaration. Channel compatibility and third-party testing requirements also remain. Distribution currently uses GitHub Releases.
+## Distribution and licenses
 
-## Origin and licenses
+Distributed through GitHub Releases; not listed in the Decky store. The [store submission checklist](https://github.com/SteamDeckHomebrew/decky-plugin-database/blob/main/.github/PULL_REQUEST_TEMPLATE/plugin_addition.md), checked November 7, 2026, includes an authorship declaration this AI-assisted project cannot truthfully satisfy.
 
-Based on the user-supplied `ClawControls_Decky_v0.1.0.zip`. The frontend now uses official `@decky/api` and `@decky/ui` builds. Project code is MIT. The release includes SteamDeckHomebrew Team's `@decky/api` 1.1.3 source and LGPL-2.1 license, plus frontend source/configuration for rebuilding with a modified library. UI and React are supplied by Decky; dependencies retain their own licenses.
+Project code: MIT. The archive includes SteamDeckHomebrew Team's `@decky/api` 1.1.3 source and LGPL-2.1 license, plus frontend source/configuration for rebuilding with a modified library. UI and React are provided by Decky; third-party dependencies retain their own licenses.

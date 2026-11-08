@@ -8,5 +8,5 @@ if __name__ == '__main__':
         main()
     finally:
         directory = Path(__file__).resolve().parent
-        if directory.parent == Path('/run') and directory.name.startswith('msi-claw-a8-z2e-controller-maintenance-'):
+        if directory.parent == Path('/run') and directory.name.startswith('msi-claw-a8-back-buttons-rumble-maintenance-'):
             shutil.rmtree(directory)

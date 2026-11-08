@@ -96,7 +96,7 @@ function Content() {
   }, []);
   const modeLabel = (value: string) => modes.find(option => option.data === value)?.label ?? value;
   function maintain(action: 'uninstall' | 'reinstall') {
-    showModal(<ConfirmModal strTitle={action === 'uninstall' ? '干净卸载 MSI Claw A8 Z2E Controller' : '干净重装 MSI Claw A8 Z2E Controller'}
+    showModal(<ConfirmModal strTitle={action === 'uninstall' ? '干净卸载 MSI Claw A8 Back Buttons & Rumble' : '干净重装 MSI Claw A8 Back Buttons & Rumble'}
       strDescription="仅清除本插件文件、配置和日志。硬件设置保持不变。重装会先下载并校验安装包；Decky 将短暂重启，其他插件也会暂时断开。"
       strOKButtonText="确认" strCancelButtonText="取消" onOK={() => {
         setBusy(true);
@@ -107,7 +107,7 @@ function Content() {
       }} />);
   }
   return <>
-    <PanelSection title="MSI Claw A8 Z2E Controller · 测试版">
+    <PanelSection title="MSI Claw A8 Back Buttons & Rumble">
       <PanelSectionRow><div style={{fontSize: 12, overflowWrap: 'anywhere'}}>{message}</div></PanelSectionRow>
       <PanelSectionRow><ButtonItem layout="below" disabled={busy || saving} onClick={() => void run(read)}>刷新硬件状态</ButtonItem></PanelSectionRow>
     </PanelSection>
@@ -128,4 +128,4 @@ function Content() {
     </PanelSection>
   </>;
 }
-export default definePlugin(() => ({name: 'MSI Claw A8 Z2E Controller', content: <Content />, icon: <span>🎮</span>}));
+export default definePlugin(() => ({name: 'MSI Claw A8 Back Buttons & Rumble', content: <Content />, icon: <span>🎮</span>}));
