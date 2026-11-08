@@ -8,7 +8,10 @@ const React = require('react');
 const {create, act} = require('react-test-renderer');
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
-test('instant mode changes, coalesced rumble, serialized writes and failure recovery', async () => {
+for (const locale of ['zh-CN', 'zh-TW', 'en-US', 'de-DE', undefined]) {
+test(`localized controls and interaction: ${locale ?? 'missing locale'}`, async () => {
+  Object.defineProperty(global, 'navigator', {value: locale ? {language: locale} : undefined, configurable: true});
+  const chinese = locale?.startsWith('zh');
   const calls = [];
   let modal;
   let failure = false;
@@ -22,7 +25,7 @@ test('instant mode changes, coalesced rumble, serialized writes and failure reco
   const api = {definePlugin: factory => factory, callable: name => async (...args) => {
     calls.push([name, ...args]);
     if (name === 'set_rumble' && hold) await hold;
-    if (name === 'set_mode' && failure) return {ok: false, error: 'simulated failure'};
+    if (name === 'set_mode' && failure) return {ok: false, error: '背键模式写入后读取不匹配。'};
     if (name === 'set_mode') hardware = {...hardware, mode: args[0]};
     if (name === 'set_rumble') hardware = {...hardware, left: args[0], right: args[1]};
     return {...hardware};
@@ -42,8 +45,9 @@ test('instant mode changes, coalesced rumble, serialized writes and failure reco
   const button = text => renderer.root.findAllByType('ButtonItem').find(node => String(node.props.children).includes(text));
   const text = () => JSON.stringify(renderer.toJSON());
   assert.deepEqual(calls, [['get_state']]);
+  if (!chinese) assert.doesNotMatch(text(), /[\u3400-\u9fff]/);
   await act(async () => { button('Combination /').props.onClick(); });
-  assert.match(text(), /Combination \/ 组合键/);
+  assert.match(text(), chinese ? /Combination \/ 组合键/ : /Combination \/ Shortcuts/);
   assert.equal(hardware.mode, 'combination');
   const noDuplicate = calls.length;
   await act(async () => { button('Combination /').props.onClick(); });
@@ -73,12 +77,19 @@ test('instant mode changes, coalesced rumble, serialized writes and failure reco
   failure = true;
   await act(async () => { button('Combination /').props.onClick(); });
   assert.equal(hardware.mode, 'macro');
-  assert.match(text(), /保存失败/);
+  assert.match(text(), chinese ? /保存失败/ : /Save failed/);
+  assert.match(text(), chinese ? /背键模式写入后读取不匹配/ : /Back-button mode read-back did not match/);
+  if (!chinese) assert.doesNotMatch(text(), /[\u3400-\u9fff]/);
   assert.match(text(), /● .*Macro/);
   assert.equal(calls.at(-1)[0], 'get_state');
+  await act(async () => { button(chinese ? '一键干净卸载' : 'Clean uninstall').props.onClick(); });
+  assert.equal(modal.props.strOKButtonText, chinese ? '确认' : 'Confirm');
+  assert.equal(modal.props.strCancelButtonText, chinese ? '取消' : 'Cancel');
+  if (!chinese) assert.doesNotMatch(JSON.stringify(modal.props), /[\u3400-\u9fff]/);
   await act(async () => { sliders()[1].props.onChange(20); });
   await act(async () => { renderer.unmount(); });
   assert.equal(hardware.right, 20); // closing the panel flushes the final pending value
 });
+}
 
 function moduleParent() { return module; }

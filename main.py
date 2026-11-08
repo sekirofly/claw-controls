@@ -70,7 +70,7 @@ def _error(exc):
 
 class Plugin:
     async def _main(self):
-        log.info("MSI Claw A8 Back Buttons & Rumble 1.0.0 loaded. euid=%s", os.geteuid())
+        log.info("MSI Claw A8 Back Buttons & Rumble 1.0.1 loaded. euid=%s", os.geteuid())
 
     async def maintenance(self, action: str):
         """Run outside the Decky service so uninstall/reinstall can stop Decky safely."""

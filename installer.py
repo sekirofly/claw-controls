@@ -13,7 +13,7 @@ import tempfile
 import urllib.request
 import zipfile
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 REPO = "https://github.com/sekirofly/msi-claw-a8-back-buttons-rumble"
 NAME = "MSI Claw A8 Back Buttons & Rumble"
 FOLDER = "msi-claw-a8-back-buttons-rumble"

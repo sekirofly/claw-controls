@@ -9,7 +9,7 @@
 先安装 Decky Loader。在 SteamOS 桌面模式打开 Konsole，以普通桌面用户运行：
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.1/install.sh | bash
 ```
 
 **安装、更新或重装后，请保存工作并正常重启，再进入 Gaming Mode。** 测试设备在安装后直接切回游戏模式可能无法识别内置手柄；重启后恢复。原因尚未确定。
@@ -21,6 +21,8 @@ curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-
 安装器先下载固定版本并验证 ZIP 和 SHA-256，再短暂重启 Decky；其他插件会暂时断开。失败时尝试回滚。校验值用于检查损坏，不是独立数字签名。可阅读 [install.sh](install.sh) 和 [installer.py](installer.py)检查流程。
 
 ## 使用
+
+界面仅提供简体中文和英文：中文语言环境显示简体中文，英文及其他语言环境显示英文。跟随 Steam/Decky 浏览器报告的语言（`navigator.language`），与 Decky Loader 使用相同的语言来源。更改界面语言后请重新打开插件。
 
 - **M1/M2 模式：**点击 Macro、Combination 或 Disabled 即时切换。两个背键共用一个模式，不改变具体按键映射。
 - **震动：**左右滑块独立调节 0–100%。数值立即跟随，停顿约 200 毫秒后自动保存。
@@ -34,9 +36,9 @@ curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-
 
 ```sh
 # 重装
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash -s -- reinstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.1/install.sh | bash -s -- reinstall
 # 卸载
-curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.0/install.sh | bash -s -- uninstall
+curl -fsSL https://raw.githubusercontent.com/sekirofly/msi-claw-a8-back-buttons-rumble/v1.0.1/install.sh | bash -s -- uninstall
 # 离线卸载
 python3 ~/homebrew/plugins/msi-claw-a8-back-buttons-rumble/installer.py uninstall
 ```
@@ -45,7 +47,7 @@ python3 ~/homebrew/plugins/msi-claw-a8-back-buttons-rumble/installer.py uninstal
 
 ## 兼容性与已知限制
 
-测试者反馈 A8 在重启后，及一次震动丢失进行 EC 重置后，震动和三个背键模式均可使用。反馈环境为 SteamOS 3.9.5 / Decky 3.3.1；这是单台设备反馈，不是全面兼容性认证。重启及可能的 EC 恢复需求仍是 v1.0.0 的已知限制。
+测试者反馈 A8 在重启后，及一次震动丢失进行 EC 重置后，震动和三个背键模式均可使用。反馈环境为 SteamOS 3.9.5 / Decky 3.3.1；这是单台设备反馈，不是全面兼容性认证。重启及可能的 EC 恢复需求仍是 v1.0.1 的已知限制。
 
 内核需在唯一的 `/sys/class/hidraw/*/device` 下提供 `mkeys_function`、`rumble_intensity_left`、`rumble_intensity_right`。无设备或多个候选时拒绝写入。root 权限用于 sysfs 写入及用户明确请求的维护。不刷固件、不安装 HHD、不修改 InputPlumber、不复位 USB、不安装常驻后台服务。
 
